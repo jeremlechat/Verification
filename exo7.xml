@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.6//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_6.dtd'>
+<nta>
+	<declaration>// Place global declarations here.
+chan leave;
+chan enter;
+</declaration>
+	<template>
+		<name x="5" y="5">Train</name>
+		<declaration>// Place local declarations here.
+</declaration>
+		<location id="id0" x="0" y="0">
+			<name x="-10" y="-34">far</name>
+		</location>
+		<location id="id1" x="0" y="-161">
+			<name x="-10" y="-195">Zone</name>
+		</location>
+		<init ref="id0"/>
+		<transition id="id2">
+			<source ref="id1"/>
+			<target ref="id0"/>
+			<label kind="synchronisation" x="76" y="-110">leave!</label>
+			<nail x="102" y="-85"/>
+		</transition>
+		<transition id="id3">
+			<source ref="id0"/>
+			<target ref="id1"/>
+			<label kind="synchronisation" x="-75" y="-51">enter!</label>
+			<nail x="-93" y="-68"/>
+		</transition>
+	</template>
+	<template>
+		<name x="5" y="5">Zone</name>
+		<declaration>// Place local declarations here.
+</declaration>
+		<location id="id4" x="8" y="17">
+		</location>
+		<init ref="id4"/>
+		<transition id="id5">
+			<source ref="id4"/>
+			<target ref="id4"/>
+			<label kind="synchronisation" x="-153" y="9">enter?</label>
+			<nail x="-85" y="68"/>
+			<nail x="-76" y="9"/>
+		</transition>
+		<transition id="id6">
+			<source ref="id4"/>
+			<target ref="id4"/>
+			<label kind="synchronisation" x="85" y="0">leave?</label>
+			<nail x="127" y="26"/>
+			<nail x="85" y="77"/>
+		</transition>
+	</template>
+	<system>// Place template instantiations here.
+train = Train();
+zone = Zone();
+system train, zone;
+</system>
+	<queries>
+		<query>
+			<formula/>
+			<comment/>
+		</query>
+	</queries>
+</nta>

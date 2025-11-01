@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.6//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_6.dtd'>
+<nta>
+	<declaration>// Place global declarations here.
+chan leave;
+chan enter;
+chan toOn;
+clock closing_time;
+int openning = 1;
+int closing = 0;</declaration>
+	<template>
+		<name x="5" y="5">zone</name>
+		<declaration>// Place local declarations here.
+</declaration>
+		<location id="id0" x="0" y="0">
+			<name x="-10" y="-34">Far</name>
+		</location>
+		<location id="id1" x="0" y="-161">
+			<name x="-10" y="-195">Zone</name>
+		</location>
+		<init ref="id0"/>
+		<transition id="id2">
+			<source ref="id1"/>
+			<target ref="id0"/>
+			<label kind="synchronisation" x="76" y="-110">leave!</label>
+			<nail x="102" y="-85"/>
+		</transition>
+		<transition id="id3">
+			<source ref="id0"/>
+			<target ref="id1"/>
+			<label kind="synchronisation" x="-119" y="-68">enter!</label>
+			<nail x="-94" y="-76"/>
+		</transition>
+	</template>
+	<template>
+		<name x="5" y="5">train</name>
+		<declaration>// Place local declarations here.
+clock temps;</declaration>
+		<location id="id4" x="-25" y="50">
+			<name x="-42" y="8">Far</name>
+		</location>
+		<location id="id5" x="-314" y="-119">
+			<name x="-324" y="-153">Close</name>
+			<label kind="invariant" x="-501" y="-144">temps &lt;=50</label>
+		</location>
+		<location id="id6" x="-42" y="-238">
+			<name x="-52" y="-272">On</name>
+			<label kind="invariant" x="-76" y="-314">temps &lt;=40</label>
+		</location>
+		<location id="id7" x="229" y="-161">
+			<name x="219" y="-195">Left</name>
+			<label kind="invariant" x="219" y="-144">temps &lt;=0</label>
+		</location>
+		<init ref="id4"/>
+		<transition id="id8">
+			<source ref="id6"/>
+			<target ref="id7"/>
+			<label kind="guard" x="42" y="-246">temps &gt;=20</label>
+			<label kind="assignment" x="102" y="-221">temps:=0</label>
+		</transition>
+		<transition id="id9">
+			<source ref="id5"/>
+			<target ref="id6"/>
+			<label kind="synchronisation" x="-297" y="-212">toOn!</label>
+			<label kind="assignment" x="-289" y="-238">temps:=0</label>
+		</transition>
+		<transition id="id10">
+			<source ref="id4"/>
+			<target ref="id5"/>
+			<label kind="synchronisation" x="-255" y="25">enter?</label>
+			<label kind="assignment" x="-323" y="8">temps:=0, closing_time:=0</label>
+		</transition>
+		<transition id="id11">
+			<source ref="id7"/>
+			<target ref="id4"/>
+			<label kind="synchronisation" x="102" y="-25">leave?</label>
+		</transition>
+	</template>
+	<template>
+		<name x="5" y="5">observateur</name>
+		<declaration>// Place local declarations here.
+</declaration>
+		<location id="id12" x="-85" y="-102">
+		</location>
+		<location id="id13" x="-85" y="51">
+			<name x="-51" y="42">reject</name>
+		</location>
+		<init ref="id12"/>
+		<transition id="id14">
+			<source ref="id12"/>
+			<target ref="id13"/>
+			<label kind="guard" x="-68" y="-51">closing_time &lt; 20</label>
+			<label kind="synchronisation" x="-68" y="-34">toOn?</label>
+		</transition>
+		<transition id="id15">
+			<source ref="id12"/>
+			<target ref="id12"/>
+			<label kind="guard" x="93" y="-187">closing_time &gt;= 20</label>
+			<label kind="synchronisation" x="93" y="-161">toOn?</label>
+			<label kind="assignment" x="93" y="-136">closing_time := 0</label>
+			<nail x="76" y="-204"/>
+			<nail x="76" y="-85"/>
+		</transition>
+	</template>
+	<template>
+		<name x="5" y="5">mock</name>
+		<declaration>// Place local declarations here.
+</declaration>
+		<location id="id16" x="-85" y="-85">
+		</location>
+		<init ref="id16"/>
+		<transition id="id17">
+			<source ref="id16"/>
+			<target ref="id16"/>
+			<label kind="synchronisation" x="-118" y="-42">enter?</label>
+			<label kind="assignment" x="-280" y="-25">closing := 1, openning := 0</label>
+			<nail x="-178" y="-34"/>
+			<nail x="-169" y="-93"/>
+		</transition>
+		<transition id="id18">
+			<source ref="id16"/>
+			<target ref="id16"/>
+			<label kind="synchronisation" x="-26" y="-127">leave?</label>
+			<label kind="assignment" x="-51" y="-102">openning := 1, closing := 0</label>
+			<nail x="34" y="-76"/>
+			<nail x="-8" y="-25"/>
+		</transition>
+	</template>
+	<system>// Place template instantiations here.
+Train = train();
+Zone = zone();
+Observateur = observateur();
+Mock = mock();
+system Train, Zone, Observateur, Mock;
+
+
+</system>
+	<queries>
+		<query>
+			<formula>A[] not deadlock</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2025-10-31 17:18:55 +0100">
+			</result>
+		</query>
+		<query>
+			<formula>E&lt;&gt; Train.Far</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2025-10-31 17:18:55 +0100">
+			</result>
+		</query>
+		<query>
+			<formula>E&lt;&gt; Train.On</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2025-10-31 17:18:55 +0100">
+			</result>
+		</query>
+		<query>
+			<formula>E&lt;&gt; Train.Close</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2025-10-31 17:18:55 +0100">
+			</result>
+		</query>
+		<query>
+			<formula>E&lt;&gt; Train.Left</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2025-10-31 17:18:55 +0100">
+			</result>
+		</query>
+		<query>
+			<formula>Train.Close --&gt; Train.On</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2025-10-31 17:18:55 +0100">
+			</result>
+		</query>
+		<query>
+			<formula>Train.On --&gt; Train.Left</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2025-10-31 17:18:55 +0100">
+			</result>
+		</query>
+		<query>
+			<formula>Train.Left --&gt; Train.Far</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2025-10-31 17:18:55 +0100">
+			</result>
+		</query>
+		<query>
+			<formula>A[] (Train.Close imply (Train.temps &gt;= 0 &amp;&amp; Train.temps &lt;= 50))</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2025-10-31 17:18:55 +0100">
+			</result>
+		</query>
+		<query>
+			<formula>A[] (Train.Left imply Train.temps == 0)</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2025-10-31 17:18:55 +0100">
+			</result>
+		</query>
+		<query>
+			<formula>A[] (Train.On imply (Train.temps &lt;= 40))</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2025-10-31 17:20:20 +0100">
+			</result>
+		</query>
+		<query>
+			<formula>A[] not Observateur.reject</formula>
+			<comment/>
+			<result outcome="failure" type="quality" timestamp="2025-11-01 09:57:25 +0100">
+			</result>
+		</query>
+	</queries>
+</nta>
