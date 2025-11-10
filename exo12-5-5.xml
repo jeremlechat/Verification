@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.6//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_6.dtd'>
+<nta>
+	<declaration>// Place global declarations here.
+broadcast chan leave;
+broadcast chan enter;
+chan toOn;
+clock closing_time;
+
+int close;
+int open; 
+
+// for the controler (exo12)
+broadcast chan is_open;
+broadcast chan is_closed;
+
+// Pour plusieurs trains
+int n_trains = 0;</declaration>
+	<template>
+		<name>controleur</name>
+		<location id="id0" x="0" y="0">
+			<name x="34" y="-17">ctrl_okay</name>
+		</location>
+		<location id="id1" x="-93" y="93">
+			<name x="-195" y="85">ctrl_error</name>
+		</location>
+		<location id="id2" x="-93" y="-136">
+			<name x="-186" y="-170">ctrl_zoned</name>
+		</location>
+		<location id="id3" x="85" y="110">
+			<name x="68" y="127">ctrl_openend</name>
+		</location>
+		<init ref="id0"/>
+		<transition id="id4">
+			<source ref="id3"/>
+			<target ref="id0"/>
+			<label kind="synchronisation" x="229" y="93">enter?</label>
+			<nail x="204" y="101"/>
+			<nail x="289" y="25"/>
+		</transition>
+		<transition id="id5">
+			<source ref="id3"/>
+			<target ref="id1"/>
+			<label kind="synchronisation" x="-34" y="110">toOn?</label>
+		</transition>
+		<transition id="id6">
+			<source ref="id0"/>
+			<target ref="id3"/>
+			<label kind="synchronisation" x="-34" y="42">is_open?</label>
+		</transition>
+		<transition id="id7">
+			<source ref="id2"/>
+			<target ref="id0"/>
+			<label kind="synchronisation" x="144" y="-144">leave?</label>
+			<nail x="-59" y="-136"/>
+			<nail x="136" y="-136"/>
+		</transition>
+		<transition id="id8">
+			<source ref="id2"/>
+			<target ref="id1"/>
+			<label kind="synchronisation" x="-170" y="-34">is_open?</label>
+		</transition>
+		<transition id="id9">
+			<source ref="id0"/>
+			<target ref="id2"/>
+			<label kind="synchronisation" x="-42" y="-93">enter?</label>
+		</transition>
+	</template>
+	<template>
+		<name x="5" y="5">zone</name>
+		<declaration>// Place local declarations here.
+clock temps_en_zone;</declaration>
+		<location id="id10" x="0" y="0">
+			<name x="-10" y="-34">Far</name>
+		</location>
+		<location id="id11" x="0" y="-161">
+			<name x="-10" y="-195">Zone</name>
+		</location>
+		<init ref="id10"/>
+		<transition id="id12">
+			<source ref="id10"/>
+			<target ref="id11"/>
+			<label kind="synchronisation" x="-144" y="-59">enter?</label>
+			<nail x="-119" y="-85"/>
+		</transition>
+		<transition id="id13">
+			<source ref="id11"/>
+			<target ref="id10"/>
+			<label kind="synchronisation" x="153" y="-85">leave?</label>
+			<nail x="136" y="-76"/>
+		</transition>
+	</template>
+	<template>
+		<name x="5" y="5">train</name>
+		<declaration>// Place local declarations here.
+clock temps;</declaration>
+		<location id="id14" x="-25" y="50">
+			<name x="-42" y="8">Far</name>
+		</location>
+		<location id="id15" x="-357" y="-110">
+			<name x="-367" y="-144">Close</name>
+			<label kind="invariant" x="-544" y="-135">temps &lt;=50</label>
+		</location>
+		<location id="id16" x="-42" y="-238">
+			<name x="-52" y="-272">On</name>
+			<label kind="invariant" x="-76" y="-314">temps &lt;=40</label>
+		</location>
+		<location id="id17" x="187" y="-136">
+			<name x="177" y="-170">Left</name>
+			<label kind="invariant" x="177" y="-119">temps &lt;=0</label>
+		</location>
+		<init ref="id14"/>
+		<transition id="id18">
+			<source ref="id16"/>
+			<target ref="id17"/>
+			<label kind="guard" x="42" y="-255">temps &gt;= 20</label>
+			<label kind="assignment" x="168" y="-243">temps:=0</label>
+		</transition>
+		<transition id="id19">
+			<source ref="id15"/>
+			<target ref="id16"/>
+			<label kind="synchronisation" x="-297" y="-212">toOn!</label>
+			<label kind="assignment" x="-289" y="-238">temps:=0</label>
+		</transition>
+		<transition id="id20">
+			<source ref="id14"/>
+			<target ref="id15"/>
+			<label kind="synchronisation" x="-255" y="25">enter!</label>
+			<label kind="assignment" x="-323" y="8">temps:=0, closing_time:=0</label>
+		</transition>
+		<transition id="id21">
+			<source ref="id17"/>
+			<target ref="id14"/>
+			<label kind="synchronisation" x="102" y="42">leave!</label>
+		</transition>
+	</template>
+	<template>
+		<name x="5" y="5">observateur</name>
+		<declaration>// Place local declarations here.
+</declaration>
+		<location id="id22" x="-85" y="-102">
+		</location>
+		<location id="id23" x="-85" y="51">
+			<name x="-51" y="42">reject</name>
+		</location>
+		<init ref="id22"/>
+		<transition id="id24">
+			<source ref="id23"/>
+			<target ref="id23"/>
+			<label kind="synchronisation" x="-271" y="29">toOn?</label>
+			<nail x="-289" y="42"/>
+			<nail x="-297" y="153"/>
+			<nail x="-85" y="187"/>
+		</transition>
+		<transition id="id25">
+			<source ref="id22"/>
+			<target ref="id23"/>
+			<label kind="guard" x="-68" y="-51">closing_time &lt; 20</label>
+			<label kind="synchronisation" x="-68" y="-34">toOn?</label>
+		</transition>
+		<transition id="id26">
+			<source ref="id22"/>
+			<target ref="id22"/>
+			<label kind="guard" x="93" y="-187">closing_time &gt;= 20</label>
+			<label kind="synchronisation" x="93" y="-161">toOn?</label>
+			<label kind="assignment" x="93" y="-136">closing_time := 0</label>
+			<nail x="76" y="-204"/>
+			<nail x="76" y="-85"/>
+		</transition>
+	</template>
+	<template>
+		<name x="5" y="5">barriere</name>
+		<declaration>// Place local declarations here.
+clock gate_time;</declaration>
+		<location id="id27" x="-501" y="8">
+			<name x="-561" y="-25">Isopen</name>
+		</location>
+		<location id="id28" x="17" y="25">
+			<name x="-59" y="17">Isclose</name>
+		</location>
+		<location id="id29" x="-246" y="-178">
+			<name x="-340" y="-212">Isclosing</name>
+			<label kind="invariant" x="-229" y="-161">gate_time &lt;= 20</label>
+		</location>
+		<location id="id30" x="-238" y="229">
+			<name x="-248" y="195">Isopenning</name>
+		</location>
+		<init ref="id27"/>
+		<transition id="id31">
+			<source ref="id29"/>
+			<target ref="id29"/>
+			<label kind="synchronisation" x="-228" y="-314">enter?</label>
+			<label kind="assignment" x="-228" y="-297">n_trains ++</label>
+			<nail x="-246" y="-297"/>
+			<nail x="-178" y="-297"/>
+		</transition>
+		<transition id="id32">
+			<source ref="id28"/>
+			<target ref="id28"/>
+			<label kind="guard" x="93" y="34">n_trains != 0</label>
+			<label kind="synchronisation" x="93" y="51">leave?</label>
+			<label kind="assignment" x="93" y="68">n_trains --</label>
+			<nail x="160" y="107"/>
+			<nail x="228" y="39"/>
+		</transition>
+		<transition id="id33">
+			<source ref="id28"/>
+			<target ref="id28"/>
+			<label kind="synchronisation" x="69" y="-110">enter?</label>
+			<label kind="assignment" x="69" y="-93">n_trains ++</label>
+			<nail x="51" y="-93"/>
+			<nail x="144" y="-93"/>
+		</transition>
+		<transition id="id34">
+			<source ref="id30"/>
+			<target ref="id29"/>
+			<label kind="synchronisation" x="-238" y="34">enter?</label>
+		</transition>
+		<transition id="id35">
+			<source ref="id30"/>
+			<target ref="id27"/>
+			<label kind="guard" x="-604" y="170">gate_time &gt;=20</label>
+			<label kind="synchronisation" x="-425" y="204">is_open!</label>
+			<nail x="-289" y="306"/>
+			<nail x="-443" y="187"/>
+		</transition>
+		<transition id="id36">
+			<source ref="id29"/>
+			<target ref="id28"/>
+			<label kind="guard" x="-136" y="-221">gate_time &gt;=20</label>
+			<nail x="-59" y="-178"/>
+		</transition>
+		<transition id="id37">
+			<source ref="id28"/>
+			<target ref="id30"/>
+			<label kind="guard" x="-119" y="85">n_trains == 0</label>
+			<label kind="synchronisation" x="-85" y="110">leave?</label>
+			<label kind="assignment" x="-59" y="212">gate_time := 0</label>
+			<nail x="-51" y="204"/>
+			<nail x="-187" y="306"/>
+		</transition>
+		<transition id="id38">
+			<source ref="id27"/>
+			<target ref="id29"/>
+			<label kind="synchronisation" x="-518" y="-102">enter?</label>
+			<label kind="assignment" x="-561" y="-195">gate_time := 0</label>
+			<nail x="-425" y="-178"/>
+		</transition>
+	</template>
+	<template>
+		<name x="5" y="5">mock</name>
+		<declaration>// Place local declarations here.
+</declaration>
+		<location id="id39" x="-85" y="-85">
+		</location>
+		<init ref="id39"/>
+		<transition id="id40">
+			<source ref="id39"/>
+			<target ref="id39"/>
+			<label kind="synchronisation" x="-118" y="-42">enter?</label>
+			<label kind="assignment" x="-340" y="-110">close := 1, open := 0</label>
+			<nail x="-178" y="-34"/>
+			<nail x="-169" y="-93"/>
+		</transition>
+		<transition id="id41">
+			<source ref="id39"/>
+			<target ref="id39"/>
+			<label kind="synchronisation" x="-34" y="-110">leave?</label>
+			<label kind="assignment" x="25" y="-51">open := 1, close := 0</label>
+			<nail x="34" y="-76"/>
+			<nail x="-8" y="-25"/>
+		</transition>
+	</template>
+	<system>// Place template instantiations here.
+Train1 = train();
+Train2 = train();
+Zone = zone();
+Observateur = observateur();
+Barriere = barriere();
+Mock = mock();
+Controleur = controleur();
+system Train1, Train2, Zone, Observateur, Barriere, Mock, Controleur;
+
+// exo 12
+// J'ai fait un controleur qui vérifie que le train ne peut pas être dans la zone avec la barrière ouverte. J'ai rajouté un signal is_open pour forcer la synchornisation. 
+
+// J'ai laissé les deux tests, qui montrent bien que 1 nous n'avons pas de deadlock, et que 2 aucun train ne peut être dans la zone. J'ai rajouté un compteur incrémental pour vérifier que AUCUN train n'est dans la zone. 
+// Cela ajoute de la modularité et assure donc que notre code peut supporter un nombre infini de trains.</system>
+	<queries>
+		<query>
+			<formula>A[] not deadlock</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2025-11-10 16:34:50 +0100">
+			</result>
+		</query>
+		<query>
+			<formula>A[] not Controleur.ctrl_error</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2025-11-10 16:34:49 +0100">
+			</result>
+		</query>
+	</queries>
+</nta>
