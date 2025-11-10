@@ -180,7 +180,7 @@ clock gate_time;</declaration>
 		</location>
 		<location id="id29" x="-246" y="-178">
 			<name x="-340" y="-212">Isclosing</name>
-			<label kind="invariant" x="-229" y="-161">gate_time &lt;= 20</label>
+			<label kind="invariant" x="-229" y="-153">gate_time&lt;=20</label>
 		</location>
 		<location id="id30" x="-238" y="229">
 			<name x="-248" y="195">Isopenning</name>
@@ -221,7 +221,7 @@ clock gate_time;</declaration>
 			<target ref="id27"/>
 			<label kind="guard" x="-604" y="170">gate_time &gt;=20</label>
 			<label kind="synchronisation" x="-425" y="204">is_open!</label>
-			<nail x="-289" y="306"/>
+			<nail x="-230" y="221"/>
 			<nail x="-443" y="187"/>
 		</transition>
 		<transition id="id36">
@@ -237,7 +237,6 @@ clock gate_time;</declaration>
 			<label kind="synchronisation" x="-85" y="110">leave?</label>
 			<label kind="assignment" x="-59" y="212">gate_time := 0</label>
 			<nail x="-51" y="204"/>
-			<nail x="-187" y="306"/>
 		</transition>
 		<transition id="id38">
 			<source ref="id27"/>
@@ -290,13 +289,13 @@ system Train1, Train2, Zone, Observateur, Barriere, Mock, Controleur;
 		<query>
 			<formula>A[] not deadlock</formula>
 			<comment/>
-			<result outcome="success" type="quality" timestamp="2025-11-10 16:34:50 +0100">
+			<result outcome="success" type="quality" timestamp="2025-11-10 16:49:20 +0100">
 			</result>
 		</query>
 		<query>
 			<formula>A[] not Controleur.ctrl_error</formula>
 			<comment/>
-			<result outcome="success" type="quality" timestamp="2025-11-10 16:34:49 +0100">
+			<result outcome="success" type="quality" timestamp="2025-11-10 16:49:20 +0100">
 			</result>
 		</query>
 	</queries>
